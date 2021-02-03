@@ -18,7 +18,7 @@
 			<nav>
 				<% if(svo != null){ %>
 				<ul>
-					<li><a href="#">안녕하세요~ <%= svo.getName() %>님!!</a></li>
+					<li><a href="#">안녕하세요~~ <%= svo.getName() %>님!!</a></li>
 					<li><a href="http://localhost:9000/MyCGV/logout.do">로그아웃</a><div></div></li>
 					<li><a href="http://localhost:9000/MyCGV/join.do">회원가입</a><div></div></li>
 					<li><a href="http://localhost:9000/MyCGV/mypage.do">MyCGV</a><div></div></li>
