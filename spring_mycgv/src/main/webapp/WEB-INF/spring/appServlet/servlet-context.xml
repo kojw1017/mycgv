@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven /> 
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+	<resources mapping="/css/**" location="/resources/css/" />
+	<resources mapping="/js/**" location="/resources/js/" />
+	<resources mapping="/images/**" location="/resources/images/" />
+
+	<!-- DAO Object -->
+	<beans:bean class="com.mycgv.dao.CgvBoardDAO" id="boardDAO"></beans:bean>
+	<beans:bean class="com.mycgv.dao.CgvMemberDAO" id="memberDAO"></beans:bean>
+	<beans:bean class="com.mycgv.dao.CgvNoticeDAO" id="noticeDAO"></beans:bean>
+	
+	<!-- Service Object -->
+	<beans:bean class="com.spring.service.MemberServiceImpl" id="memberService"></beans:bean>
+	<beans:bean class="com.spring.service.BoardServiceImpl" id="boardService"></beans:bean>
+	<beans:bean class="com.spring.service.NoticeServiceImpl" id="noticeService"></beans:bean>
+	 
+	<!-- Interceptor Object -->
+	<beans:bean id="authInterceptor"  class="com.mycgv.interceptor.AuthHandlerInterceptor"></beans:bean>
+	<beans:bean id="authInterceptor2"  class="com.mycgv.interceptor.AuthHandlerInterceptor2"></beans:bean>
+	
+	<interceptors>
+		<interceptor>
+			<mapping path="/mypage*"/> <!-- 체크할 url 주소 -->
+			<beans:ref bean="authInterceptor"/> <!-- 체크를 진행할 객체 -->
+		</interceptor>
+		<interceptor>
+			<mapping path="/admin*"/> <!-- 체크할 url 주소 -->
+			<beans:ref bean="authInterceptor2"/> <!-- 체크를 진행할 객체 -->
+		</interceptor>
+	</interceptors>
+	
+	 
+	 
+	<!-- multipartResolver -->
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	</beans:bean> 
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+		
+	<context:component-scan base-package="com.spring.MyCGV" />
+	<context:component-scan base-package="com.spring.controller" />
+
+	
+</beans:beans>
+
+
+
+
+
+
+
+

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.notice">
+
+	<delete id="deletelist" parameterType="java.lang.reflect.Array">
+		delete cgvnotice where nid in
+		
+		<foreach item="str" index="index" collection="array"
+     		 open="(" separator="," close=")">
+        	#{str}
+  		</foreach>
+		
+	</delete>
+
+	<insert id="insert" parameterType="com.mycgv.vo.CgvNoticeVO">
+		insert into cgvnotice values
+		<choose>
+			<when test="nfile != null">
+				('n_'||sequ_cgvnotice.nextval,#{ntitle},#{ncontent}
+						,#{nfile},#{nsfile},sysdate,0)
+			</when>
+			<otherwise>
+				('n_'||sequ_cgvnotice.nextval,#{ntitle},#{ncontent}
+						,'','',sysdate,0)	
+			</otherwise>		
+		</choose>
+					 
+	</insert>
+	
+	<select id="list" parameterType="map"
+		resultType="com.mycgv.vo.CgvNoticeVO">
+		select * from (select rownum rno, nid, ntitle, 
+		to_char(ndate,'yyyy.mm.dd'), nhits 
+			from (select * from cgvnotice order by ndate desc)) 
+			 where rno between #{start} and #{end}
+	</select>
+
+	<select id="content" parameterType="java.lang.String"
+		resultType="com.mycgv.vo.CgvNoticeVO">
+		select nid,ntitle, ncontent 
+				,to_char(ndate,'yyyy.mm.dd') ndate,nhits, nfile, nsfile  
+		from cgvnotice 
+		where nid=#{nid}
+	</select>
+
+	<update id="update" parameterType="com.mycgv.vo.CgvNoticeVO">
+		update cgvnotice set ntitle=#{ntitle}, ncontent=#{ncontent}
+		<if test="nfile != null">
+			,nfile=#{nfile}, nsfile=#{nsfile}
+		</if>
+		where nid=#{nid}
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.String">
+		delete from cgvnotice where nid=#{nid}
+	</delete>
+
+	<update id="updatehits" parameterType="java.lang.String">
+		update cgvnotice set nhits=nhits+1 where nid=#{nid}
+	</update>
+	
+	<select id="listcount" resultType="int">
+		select count(*) from cgvnotice
+	</select>
+	
+</mapper>    
+
+    

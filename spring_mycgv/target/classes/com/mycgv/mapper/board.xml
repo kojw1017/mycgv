@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.board">
+
+	<!-- id:listcount  -->
+	<select id="listcount" resultType="int">
+		select count(*) from cgvboard
+	</select>
+
+	<!-- id:delete -->
+	<delete id="delete" parameterType="java.lang.String">
+		delete from cgvboard where bid=#{bid}
+	</delete>
+
+	<!-- id:update -->
+	<update id="update" parameterType="com.mycgv.vo.CgvBoardVO">
+		update cgvboard 
+		set btitle=#{btitle}, bcontent=#{bcontent} 
+		<if test="bfile != null">
+			,bfile=#{bfile}, bsfile=#{bsfile}
+		</if>
+		where bid=#{bid}
+	</update>
+
+	<!-- id:updatehits -->
+	<update id="updatehits" parameterType="java.lang.String">
+		update cgvboard set bhits=bhits+1 where bid=#{bid}
+	</update>
+
+	<!-- id:content -->
+	<select id="content" parameterType="java.lang.String"
+				resultType="com.mycgv.vo.CgvBoardVO">
+		select bid,btitle,bcontent,bfile,bsfile 
+			,to_char(bdate,'yyyy.mm.dd') bdate, bhits
+		from cgvboard where bid=#{bid}
+	</select>
+
+	<!-- id:insert -->
+	<insert id="insert" parameterType="com.mycgv.vo.CgvBoardVO">
+		insert into cgvboard values 
+		<choose>
+			<when test="bfile != null">
+				('b_'||sequ_cgvboard.nextval,#{btitle},#{bcontent}
+		 			,#{bfile},#{bsfile},sysdate,0)
+			</when>
+			<otherwise>
+				('b_'||sequ_cgvboard.nextval,#{btitle},#{bcontent}
+		 			,'','',sysdate,0)
+			</otherwise>
+		</choose>	
+	</insert>
+
+	<!-- id:list -->
+	<select id="list" parameterType="map" 
+			resultType="com.mycgv.vo.CgvBoardVO">
+		select * 
+		from (select rownum rno, bid, btitle, 
+					to_char(bdate,'yyyy.mm.dd') bdate, bhits  
+		 		from (select * from cgvboard order by bdate desc)) 
+		where rno between #{start} and #{end}
+	</select>
+
+</mapper>    
+
+    
